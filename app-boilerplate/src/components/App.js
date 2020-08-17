@@ -4,9 +4,25 @@ import Header from "./Header";
 import TodoPrivateWrapper from "./Todo/TodoPrivateWrapper";
 import TodoPublicWrapper from "./Todo/TodoPublicWrapper";
 import OnlineUsersWrapper from "./OnlineUsers/OnlineUsersWrapper";
-
 import { useAuth0 } from "./Auth/react-auth0-spa";
+import {
+  ApolloClient,
+  ApolloProvider,
+  InMemoryCache,
+  HttpLink
+} from "@apollo/client";
 
+const createApolloClient = authToken => {
+  return new ApolloClient({
+    link: new HttpLink({
+      uri: 'https://hasura.io/learn/graphql',
+      headers: {
+        Authorization: `Bearer ${authToken}`
+      }
+    }),
+    cache: new InMemoryCache()
+  });
+};
 const App = ({ idToken }) => {
   const { loading, logout } = useAuth0();
   if (loading) {
