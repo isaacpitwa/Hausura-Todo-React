@@ -20,7 +20,7 @@ const GET_MY_TODOS = gql`
 const TodoPrivateList = props => {
   const [state, setState] = useState({
     filter: "all",
-    clearInProgress: false,
+    clearInProgress: false
   });
 
   const filterResults = filter => {
@@ -36,7 +36,7 @@ const TodoPrivateList = props => {
   if (state.filter === "active") {
     filteredTodos = todos.filter(todo => todo.is_completed !== true);
   } else if (state.filter === "completed") {
-    filteredTodos = state.todos.filter(todo => todo.is_completed === true);
+    filteredTodos = todos.filter(todo => todo.is_completed === true);
   }
 
   const todoList = [];
@@ -72,4 +72,5 @@ const TodoPrivateListQuery = () => {
   }
   return <TodoPrivateList todos={data.todos} />;
 };
-export default TodoPrivateList;
+export default TodoPrivateListQuery;
+export { GET_MY_TODOS };
