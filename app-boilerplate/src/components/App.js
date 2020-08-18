@@ -5,12 +5,9 @@ import TodoPrivateWrapper from "./Todo/TodoPrivateWrapper";
 import TodoPublicWrapper from "./Todo/TodoPublicWrapper";
 import OnlineUsersWrapper from "./OnlineUsers/OnlineUsersWrapper";
 import { useAuth0 } from "./Auth/react-auth0-spa";
-import {
-  ApolloClient,
-  ApolloProvider,
-  InMemoryCache,
-  HttpLink
-} from "@apollo/client";
+
+import { ApolloClient, ApolloProvider, InMemoryCache } from "@apollo/client";
+import { WebSocketLink } from "@apollo/client/link/ws";
 
 /* 
 We are creating an HttpLink to connect ApolloClient with the GraphQL server. As you know already, our GraphQL server is running at https://hasura.io/learn/graphql
@@ -19,11 +16,16 @@ At the end, we instantiate ApolloClient by passing in our HttpLink and a new ins
 */
 const createApolloClient = authToken => {
   return new ApolloClient({
-    link: new HttpLink({
-      uri: "https://hasura.io/learn/graphql",
-      headers: {
-        Authorization: `Bearer ${authToken}`
-      }
+      link: new WebSocketLink({
+        uri: "wss://hasura.io/learn/graphql",
+        options: {
+          reconnect: true,
+          connectionParams: {
+            headers: {
+              Authorization: `Bearer ${authToken}`
+          }
+          }
+        }
     }),
     cache: new InMemoryCache()
   });
