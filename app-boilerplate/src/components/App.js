@@ -16,16 +16,16 @@ At the end, we instantiate ApolloClient by passing in our HttpLink and a new ins
 */
 const createApolloClient = authToken => {
   return new ApolloClient({
-      link: new WebSocketLink({
-        uri: "wss://hasura.io/learn/graphql",
-        options: {
-          reconnect: true,
-          connectionParams: {
-            headers: {
-              Authorization: `Bearer ${authToken}`
-          }
+    link: new WebSocketLink({
+      uri: "wss://hasura.io/learn/graphql",
+      options: {
+        reconnect: true,
+        connectionParams: {
+          headers: {
+            Authorization: `Bearer ${authToken}`
           }
         }
+      }
     }),
     cache: new InMemoryCache()
   });
