@@ -16,6 +16,11 @@ const ADD_TODO = gql`
 `;
 const TodoInput = ({ isPublic = false }) => {
   const [todoInput, setTodoInput] = useState("");
+  /* 
+  The update function is used to update the cache after a mutation occurs.
+   It receives the result of the mutation (data) and the current cache (store) as arguments.
+   You will then use these arguments to manage your cache so that the UI will be up to date.
+  */
   const updateCache = (cache, { data }) => {
     // If this is for the public feed, do nothing
     if (isPublic) {
@@ -32,7 +37,13 @@ const TodoInput = ({ isPublic = false }) => {
       data: { todos: [newTodo, ...existingTodos.todos] }
     });
   };
-  const [addTodo] = useMutation(ADD_TODO, { update: updateCache });
+  const resetInput = () => {
+    setTodoInput("");
+  };
+  const [addTodo] = useMutation(ADD_TODO, {
+    update: updateCache,
+    onCompleted: resetInput
+  });
   return (
     <form
       className="formInput"
