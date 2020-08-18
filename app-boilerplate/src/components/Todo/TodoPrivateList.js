@@ -1,5 +1,5 @@
 import React, { useState, Fragment } from "react";
-import { useQuery, gql } from "@apollo/client";
+import { useMutation, useQuery, gql } from "@apollo/client";
 
 import TodoItem from "./TodoItem";
 import TodoFilters from "./TodoFilters";
@@ -16,7 +16,19 @@ const GET_MY_TODOS = gql`
       is_completed
     }
   }
+`; // Remove all the todos that are completed
+const CLEAR_COMPLETED = gql`
+  mutation clearCompleted {
+    delete_todos(
+      where: { is_completed: { _eq: true }, is_public: { _eq: false } }
+    ) {
+      affected_rows
+    }
+  }
 `;
+
+const [clearCompletedTodos] = useMutation(CLEAR_COMPLETED);
+
 const TodoPrivateList = props => {
   const [state, setState] = useState({
     filter: "all",
@@ -30,8 +42,17 @@ const TodoPrivateList = props => {
     });
   };
 
-  const clearCompleted = () => {};
-  const {todos} = props;
+  const clearCompleted = () => {
+    clearCompletedTodos({
+      optimisticResponse: true,
+      update: (cache, { data }) => {
+        const existingTodos = cache.readQuery({ query: GET_MY_TODOS });
+        const newTodos = existingTodos.todos.filter(t => !t.is_completed);
+        cache.writeQuery({ query: GET_MY_TODOS, data: { todos: newTodos } });
+      }
+    });
+  };
+  const { todos } = props;
   let filteredTodos = todos;
   if (state.filter === "active") {
     filteredTodos = todos.filter(todo => todo.is_completed !== true);
