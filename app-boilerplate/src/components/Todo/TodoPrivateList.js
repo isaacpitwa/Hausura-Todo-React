@@ -27,9 +27,9 @@ const CLEAR_COMPLETED = gql`
   }
 `;
 
-const [clearCompletedTodos] = useMutation(CLEAR_COMPLETED);
 
 const TodoPrivateList = props => {
+  const [clearCompletedTodos] = useMutation(CLEAR_COMPLETED);
   const [state, setState] = useState({
     filter: "all",
     clearInProgress: false
